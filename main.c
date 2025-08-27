@@ -85,11 +85,11 @@ int main()
     printf("Estacao Meteorologica - MODO TESTE DE SENSORES\n");
 
     // --- ATENÇÃO: INICIALIZAÇÃO DO LORA ESTÁ COMENTADA PARA TESTES ---
-    // if (!lora_setup()) {
-    //     printf("Falha ao iniciar o radio LoRa. Travando.\n");
-    //     while (1);
-    // }
-    // lora_init(LORA_FREQUENCY, LORA_POWER_DBM, LORA_SPREADING_FACTOR, LORA_BANDWIDTH, LORA_CODING_RATE);
+    if (!lora_setup()) {
+        printf("Falha ao iniciar o radio LoRa. Travando.\n");
+        while (1);
+    }
+    lora_init(LORA_FREQUENCY, LORA_POWER_DBM, LORA_SPREADING_FACTOR, LORA_BANDWIDTH, LORA_CODING_RATE);
 
     // --- Inicialização do Display SSD1306 ---
     i2c_init(I2C_PORT_DISPLAY, 400 * 1000);
@@ -180,15 +180,16 @@ int main()
         }
         ssd1306_send_data(&ssd);
 
-        // if (g_enviar_dados_lora) {
-        //     char pacote_lora[100];
-        //     snprintf(pacote_lora, sizeof(pacote_lora), "ID:Node1,Pkt:%d,T:%.1f,U:%.1f,P:%.1f",
-        //         packet_counter++, g_temp_media, g_umidade_aht, g_pressao_kpa * 10);
-        //
-        //     lora_send_packet(pacote_lora);
-        // }
+        // Linha comentada para testes
+        if (g_enviar_dados_lora) {
+            char pacote_lora[100];
+            snprintf(pacote_lora, sizeof(pacote_lora), "ID:Node1,Pkt:%d,T:%.1f,U:%.1f,P:%.1f",
+                packet_counter++, g_temp_media, g_umidade_aht, g_pressao_kpa * 10);
+        
+            lora_send_packet(pacote_lora);
+        }
 
         sleep_ms(2000);
     }
-    return 0;
+    return 0; 
 }
