@@ -33,20 +33,21 @@
 // FUNÇÃO PARA ATUALIZAR O DISPLAY
 // ========================================
 void update_display(ssd1306_t *ssd, int packet_num, float temp, float umid, float press, int rssi) {
-    char str_line1[32], str_line2[32], str_line3[32], str_line4[32];
-    
-    sprintf(str_line1, "Pkt:%d RSSI:%d", packet_num, rssi);
-    sprintf(str_line2, "Temp: %.1f C", temp);
-    sprintf(str_line3, "Umid: %.1f %%", umid);
-    sprintf(str_line4, "Pres: %.1f hPa", press);
-
-    ssd1306_fill(ssd, false);
-    ssd1306_draw_string(ssd, "LoRa Receptor", 16, 4);
-    ssd1306_draw_string(ssd, str_line1, 0, 20);
-    ssd1306_draw_string(ssd, str_line2, 0, 32);
-    ssd1306_draw_string(ssd, str_line3, 0, 44);
-    ssd1306_draw_string(ssd, str_line4, 0, 56);
-    ssd1306_send_data(ssd);
+    char str_tmp_bmp[10], str_press[10], str_tmp_aht[10], str_umi[10];
+            sprintf(str_tmp_bmp, "%.1fC", temp);
+            sprintf(str_press, "%.0fhPa", press);
+            sprintf(str_tmp_aht, "%.1fC", temp);
+            sprintf(str_umi, "%.1f%%", umid);
+            ssd1306_fill(ssd, false);
+            ssd1306_draw_string(ssd, "Lora Receptor", 12, 4);
+            ssd1306_draw_string(ssd, "BMP280", 12, 22);
+            ssd1306_draw_string(ssd, "AHT20", 76, 22);
+            ssd1306_line(ssd, 63, 18, 63, 61, true);
+            ssd1306_draw_string(ssd, str_tmp_bmp, 12, 36);
+            ssd1306_draw_string(ssd, str_press, 12, 48);
+            ssd1306_draw_string(ssd, str_tmp_aht, 76, 36);
+            ssd1306_draw_string(ssd, str_umi, 76, 48);
+            ssd1306_send_data(ssd);
 }
 
 
@@ -105,12 +106,6 @@ int main() {
                        pkt_id, temp_rx, umid_rx, press_rx);
                 
                 update_display(&ssd, pkt_id, temp_rx, umid_rx, press_rx, rssi);
-            } else {
-                 printf("Falha ao extrair dados do pacote. Itens lidos: %d\n", items_parsed);
-                 ssd1306_fill(&ssd, false);
-                 ssd1306_draw_string(&ssd, "Erro no Pacote", 0, 20);
-                 ssd1306_draw_string(&ssd, (const char*) buffer, 0, 32);
-                 ssd1306_send_data(&ssd);
             }
         }
         sleep_ms(10); // Pequena pausa para não sobrecarregar o processador
